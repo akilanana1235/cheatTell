@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="icon" href="/static/assets/flavicon.png" type="image/icon type"/>
+
+    <title>Cheattell - Plagiarism Checker for Blogpost Articles</title>
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU"
+            crossorigin="anonymous"
+    />
+    <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='style.css') }}"
+    />
+</head>
+<body class="background-1">
+<div class="eleven card">
+    <h1 class="title">Plagiarism report</h1>
+    <h5>
+        <span id="plagCount" style="color: red">{{ plagCount }}</span> out of
+        <span id="totalSentences"> {{ total }}</span> sentences plagiarised
+    </h5>
+    <h5><span id="plagPercent" style="color: red">0</span> % plagiarised</h5>
+    {% if mostProbable|length > 0 %}
+        <p>Most Probable Sources</p>
+        {% for sites in mostProbable %}
+            <li>
+                <a href="{{ sites[0] }}" style="word-wrap: break-word">{{ sites[0] }}</a>
+            </li>
+        {% endfor %} {% endif %}
+</div>
+
+{% if multilingualData|length > 0 %}
+    <div
+            class="
+        container
+        my-3
+        d-flex
+        flex-column
+        align-items-center
+        justify-content-center
+      "
+    >
+        <h3>Native text</h3>
+        <p class="fw-bold">{{ multilingualData }}</p>
+    </div>
+
+{% endif %}
+<div class="container">
+    <table class="results my-3">
+        {% for sentence, src in res.items() %} {% if src == "" %}
+            <tr>
+                <td style="color: rgb(0, 255, 0)">&roarr; {{ sentence }}</td>
+                <td class="orignalSentence unselect fourth">Unselect</td>
+            </tr>
+
+        {% else %}
+            <tr>
+                <td style="color: red">
+                    &roarr; {{ sentence }} : <a href=" {{ src }}">Probable source</a>
+                </td>
+                <td class="btn-sm plagiarisedSentence unselect fourth">Unselect</td>
+            </tr>
+        {% endif %} {% endfor %}
+    </table>
+</div>
+
+<div class="container my-2 d-flex flex-column align-items-center">
+    <h5 class="my-1">Document view</h5>
+    <p style="font-weight: bold; font-size: 15px; line-height: 1.6">
+        {% for sentence, src in res.items() %} {% if src == "" %}
+            <span style="color: rgb(0, 255, 0)"> {{ sentence }} </span>
+        {% else %}
+            <span style="color: rgb(255, 0, 0)"> {{ sentence }} </span>
+        {% endif %} {% endfor %}
+    </p>
+    <div>
+        <button onclick="window.print()" class="btn btn-sm btn-primary">
+            Print report
+        </button>
+        <a href="/" class="btn btn-sm btn-success">Home</a>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='display.js') }}"></script>
+</body>
+</html>
